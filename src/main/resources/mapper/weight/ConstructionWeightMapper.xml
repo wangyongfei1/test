@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdomconstruction.wisdomConstruction.dao.base.mapper.weight.ConstructionWeightMapper">
+
+    <!-- 开启二级缓存 -->
+    <!--    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>-->
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wisdomconstruction.wisdomConstruction.dao.base.domain.weight.ConstructionWeightDO">
+        <result column="id" property="id"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="creator" property="creator"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="project_no" property="projectNo"/>
+        <result column="device_no" property="deviceNo"/>
+        <result column="cargo_net_weight" property="cargoNetWeight"/>
+        <result column="cargo_gross_weight" property="cargoGrossWeight"/>
+        <result column="cargo_skin_weight" property="cargoSkinWeight"/>
+        <result column="in_time" property="inTime"/>
+        <result column="license_plate_no" property="licensePlateNo"/>
+        <result column="cargo_name" property="cargoName"/>
+        <result column="supplier" property="supplier"/>
+        <result column="remarks" property="remarks"/>
+        <result column="cargo_photo" property="cargoPhoto"/>
+        <result column="serial_number" property="serialNumber"/>
+    </resultMap>
+
+    <resultMap id="BaseInfoMap" type="com.wisdomconstruction.wisdomConstruction.common.dto.weight.ConstructionWeightDTO">
+        <result column="project_no" property="projectNo"/>
+        <result column="device_no" property="deviceNo"/>
+        <result column="cargo_net_weight" property="cargoNetWeight"/>
+        <result column="cargo_gross_weight" property="cargoGrossWeight"/>
+        <result column="cargo_skin_weight" property="cargoSkinWeight"/>
+        <result column="in_time" property="inTime"/>
+        <result column="license_plate_no" property="licensePlateNo"/>
+        <result column="cargo_name" property="cargoName"/>
+        <result column="supplier" property="supplier"/>
+        <result column="remarks" property="remarks"/>
+        <result column="cargo_photo" property="cargoPhoto"/>
+        <result column="serial_number" property="serialNumber"/>
+        <result column="gmt_create" property="gmtCreate"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        is_delete,
+        creator,
+        gmt_create,
+        modifier,
+        gmt_modified,
+        project_no, device_no, cargo_net_weight, cargo_gross_weight, cargo_skin_weight, in_time, license_plate_no, cargo_name, supplier, remarks,cargo_photo, serial_number,
+    </sql>
+
+    <!--查询地磅当天称重信息-->
+    <select id="getTodayWeight" resultMap="BaseResultMap"
+            parameterType="string">
+          select *
+           from construction_site_cargo_info
+          where device_no = #{deviceNo}
+            and is_delete = '0'
+            and date_format(gmt_create,'%Y-%m-%d') = (select curdate())
+    </select>
+
+    <!--查询地磅当天打单次数-->
+    <select id="getTodayBillCount" resultType="int"
+            parameterType="string">
+          select count(id)
+           from construction_site_cargo_info
+          where device_no = #{deviceNo}
+            and is_delete = '0'
+            and date_format(gmt_create,'%Y-%m-%d') = (select curdate())
+    </select>
+
+    <!--根据车牌号查询最新称重-->
+    <select id="selectLastByLicensePlateNo" resultMap="BaseInfoMap"
+            parameterType="string">
+          select *
+             from construction_site_cargo_info
+            where license_plate_no = #{licensePlateNo}
+	          and is_delete = '0'
+	     ORDER BY gmt_create desc
+	              limit 1
+    </select>
+
+    <!--获取当日操作员人数-->
+    <select id="getTodayOperatorCount" resultType="int"
+            parameterType="string">
+        select  count(operator)
+        from (
+	     select DISTINCT operator
+	     from construction_site_cargo_info
+         where device_no = #{deviceNo}
+           and is_delete = '0'
+	       and date_format(gmt_create,'%Y-%m-%d') = (select curdate())
+	    ) as a
+    </select>
+
+    <!--条件查询称重记录-->
+    <select id="queryWeightByCondition" resultMap="BaseInfoMap"
+            parameterType="com.wisdomconstruction.wisdomConstruction.common.vo.weight.ConstructionWeightVO">
+        SELECT *
+        FROM construction_site_cargo_info
+        <where>
+            and is_delete=0
+            <if test="licensePlateNo !=null and licensePlateNo !=''">
+                and license_plate_no= #{licensePlateNo}
+            </if>
+            <if test="gmtCreate !=null and gmtCreate !=''">
+                and gmt_create LIKE '%${gmtCreate}%'
+            </if>
+        </where>
+        ORDER BY gmt_create desc
+    </select>
+
+    <!--查询最近的100条称重记录-->
+    <select id="selectWeightList" resultMap="BaseInfoMap"
+            parameterType="string">
+        SELECT *
+        FROM construction_site_cargo_info
+        WHERE  device_no=#{deviceNo}
+          and  is_delete=0
+          ORDER BY gmt_create desc LIMIT 100
+    </select>
+
+</mapper>

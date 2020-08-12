@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdomconstruction.wisdomConstruction.dao.base.mapper.user.UserInfoMapper">
+
+    <!-- 开启二级缓存 -->
+    <!--    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>-->
+
+
+
+    <!--查询公司下所有用户-->
+    <select id="getAllCompanyUserInfo" resultType="com.wisdomconstruction.wisdomConstruction.common.dto.user.CompanyUserInfoDTO"
+            parameterType="string">
+          SELECT
+            a.company_no companyNo,
+            a.user_no userNo,
+            a.really_name reallyName,
+            a.user_mobile userMobile,
+            a.union_id unionId
+          FROM
+            (
+            (
+            SELECT
+            urr.company_no,
+            urr.project_no,
+            urr.user_no,
+            ui.really_name,
+            ui.user_mobile,
+            ui.union_id	,
+            GROUP_CONCAT( ri.role_name ) AS role_names_str
+            FROM
+            user_role_relation urr
+            INNER JOIN role_info ri ON ri.id = urr.role_id
+            AND ri.is_delete = 0
+            INNER JOIN company_info ci ON ci.company_no = urr.company_no
+            AND ci.is_delete = 0
+            LEFT JOIN company_project_info cpi ON cpi.project_no = urr.project_no
+            AND cpi.is_delete = 0
+            INNER JOIN user_info ui ON ui.is_delete = 0
+            AND ui.user_no = urr.user_no
+            WHERE
+            urr.is_delete = 0
+            AND urr.company_no = #{companyNo}
+            AND urr.project_no = #{projectNo}
+            AND ui.union_id is not null
+            GROUP BY
+            urr.company_no,
+            urr.project_no,
+            urr.user_no,
+            ui.really_name,
+            ui.user_mobile,
+            ui.union_id
+            ) UNION ALL
+            (
+            SELECT
+            urr.company_no,
+            urr.project_no,
+            urr.user_no,
+            ui.really_name,
+            ui.user_mobile,
+            ui.union_id	,
+            GROUP_CONCAT( ri.role_name ) AS role_names_str
+            FROM
+            user_role_relation urr
+            INNER JOIN role_info ri ON ri.id = urr.role_id
+            AND ri.is_delete = 0
+            INNER JOIN company_info ci ON ci.company_no = urr.company_no
+            AND ci.is_delete = 0
+            LEFT JOIN company_project_info cpi ON cpi.project_no = urr.project_no
+            AND cpi.is_delete = 0
+            INNER JOIN user_info ui ON ui.is_delete = 0
+            AND ui.user_no = urr.user_no
+            WHERE
+            urr.is_delete = 0
+            AND urr.company_no = #{companyNo}
+            AND ui.union_id is not null
+            GROUP BY
+            urr.company_no,
+            urr.project_no,
+            urr.user_no,
+            ui.really_name,
+            ui.user_mobile,
+            ui.union_id
+            )
+            ) a
+            GROUP BY
+            a.company_no,
+            a.user_no,
+            a.really_name,
+            a.user_mobile,
+            a.union_id
+    </select>
+
+
+</mapper>

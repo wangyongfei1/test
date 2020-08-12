@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdomconstruction.wisdomConstruction.dao.base.mapper.siteDust.ConstructionSiteDustMapper">
+
+    <!-- 开启二级缓存 -->
+    <!--    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>-->
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wisdomconstruction.wisdomConstruction.dao.base.domain.siteDust.ConstructionSiteDustDO">
+        <result column="id" property="id"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="creator" property="creator"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="project_no" property="projectNo"/>
+        <result column="device_no" property="deviceNo"/>
+        <result column="temperature" property="temperature"/>
+        <result column="humidity" property="humidity"/>
+        <result column="air_pressure" property="airPressure"/>
+        <result column="wind_speed" property="windSpeed"/>
+        <result column="direction_wind" property="directionWind"/>
+        <result column="particulate_25" property="particulate25"/>
+        <result column="particulate_10" property="particulate10"/>
+        <result column="suspended_particles" property="suspendedParticles"/>
+        <result column="noise" property="noise"/>
+        <result column="transmission_time" property="transmissionTime"/>
+    </resultMap>
+
+    <resultMap id="BaseInfoMap" type="com.wisdomconstruction.wisdomConstruction.common.dto.dust.ConstructionSiteDustDTO">
+        <result column="project_no" property="projectNo"/>
+        <result column="device_no" property="deviceNo"/>
+        <result column="temperature" property="temperature"/>
+        <result column="humidity" property="humidity"/>
+        <result column="air_pressure" property="airPressure"/>
+        <result column="wind_speed" property="windSpeed"/>
+        <result column="direction_wind" property="directionWind"/>
+        <result column="particulate_25" property="particulate25"/>
+        <result column="particulate_10" property="particulate10"/>
+        <result column="suspended_particles" property="suspendedParticles"/>
+        <result column="noise" property="noise"/>
+        <result column="transmission_time" property="transmissionTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        is_delete,
+        creator,
+        gmt_create,
+        modifier,
+        gmt_modified,
+        project_no, device_no, temperature, humidity, air_pressure, wind_speed, direction_wind, particulate_25,particulate_10,suspended_particles,noise,transmission_time
+    </sql>
+
+    <!--查询最新扬尘数据-->
+    <select id="getConstructionSiteDust" resultMap="BaseResultMap"
+            parameterType="string">
+          select *
+          from construction_site_dust
+          where project_no = #{projectNo}
+          ORDER BY transmission_time desc
+          limit 1
+    </select>
+
+
+</mapper>

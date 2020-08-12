@@ -1,0 +1,48 @@
+package ${cfg.packageName};
+
+/**
+ * <p>
+ * $!{table.comment}属性列名枚举
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+public enum ${entity}PropertiesEnum {
+
+## ----------  BEGIN 字段循环遍历  ----------
+#foreach($field in ${table.fields})
+#if("$!field.comment" != "")
+    /**
+     * ${field.comment}
+     */
+#end
+    ## 普通字段
+${field.upperColumnName}("${field.propertyName}", "${field.name}")#if($foreach.hasNext),#else;#end
+
+#end
+## ----------  END 字段循环遍历  ----------
+
+    /**
+     * 属性名
+     */
+    private String property;
+
+    /**
+     * 表字段名
+     */
+    private String column;
+
+    ${entity}PropertiesEnum(String property, String column) {
+        this.property = property;
+        this.column = column;
+    }
+
+    public String getProperty() {
+        return property;
+    }
+
+    public String getColumn() {
+        return column;
+    }
+}

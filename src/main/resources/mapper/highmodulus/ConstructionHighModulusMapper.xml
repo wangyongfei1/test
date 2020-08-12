@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdomconstruction.wisdomConstruction.dao.base.mapper.highmodulus.ConstructionHighModulusMapper">
+
+    <!-- 开启二级缓存 -->
+    <!--    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>-->
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wisdomconstruction.wisdomConstruction.dao.base.domain.highmodulus.ConstructionHighModulusDO">
+        <result column="id" property="id"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="creator" property="creator"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="project_no" property="projectNo"/>
+        <result column="serial_number" property="serialNumber"/>
+        <result column="horizontal_displacement" property="horizontalDisplacement"/>
+        <result column="settlement_template" property="settlementTemplate"/>
+        <result column="poling_angle" property="polingAngle"/>
+        <result column="horizontal_angle" property="horizontalAngle"/>
+        <result column="bearing" property="bearing"/>
+        <result column="site_status" property="siteStatus"/>
+    </resultMap>
+
+    <resultMap id="BaseInfoMap" type="com.wisdomconstruction.wisdomConstruction.common.dto.highmodulus.ConstructionHighModulusDTO">
+        <result column="project_no" property="projectNo"/>
+        <result column="serial_number" property="serialNumber"/>
+        <result column="horizontal_displacement" property="horizontalDisplacement"/>
+        <result column="settlement_template" property="settlementTemplate"/>
+        <result column="poling_angle" property="polingAngle"/>
+        <result column="horizontal_angle" property="horizontalAngle"/>
+        <result column="bearing" property="bearing"/>
+        <result column="site_status" property="siteStatus"/>
+        <result column="gmt_create" property="gmtCreate"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        is_delete,
+        creator,
+        gmt_create,
+        modifier,
+        gmt_modified,
+        project_no, serial_number, horizontal_displacement, settlement_template, poling_angle, horizontal_angle, bearing, site_status
+    </sql>
+
+    <!--查询高支模实时数据-->
+    <select id="getHighModulus" resultMap="BaseInfoMap"
+            parameterType="string">
+          select *
+          from construction_high_modulus
+          where serial_number = #{serialNumber}
+          and is_delete = '0'
+          ORDER BY gmt_create desc limit 20
+    </select>
+
+    <!--查询异常高支模实时数据-->
+    <select id="getAlertHighModulus" resultMap="BaseInfoMap"
+            parameterType="string">
+          select *
+          from construction_high_modulus
+          where serial_number = #{serialNumber}
+          and is_delete = '0'
+          and site_status != '0'
+          ORDER BY gmt_create desc limit 20
+    </select>
+
+    <!--查询当天高支报警次数-->
+    <select id="getAlertCount" resultType="int"
+            parameterType="string">
+          select count(id)
+          from construction_high_modulus
+          where serial_number = #{serialNumber}
+            and is_delete = '0'
+            and site_status != '0'
+            and date_format(gmt_create,'%Y-%m-%d') = (select curdate())
+    </select>
+
+</mapper>
