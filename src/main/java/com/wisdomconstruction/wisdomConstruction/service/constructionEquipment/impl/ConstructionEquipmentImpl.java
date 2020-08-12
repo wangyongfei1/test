@@ -48,6 +48,7 @@ public class ConstructionEquipmentImpl implements ConstructionEquipmentService {
             System.out.println("master");
             System.out.println("master");
             System.out.println("master");
+            System.out.println("test");
             return constructionEquipmentDTO;
         }
         return null;
