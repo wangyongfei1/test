@@ -44,11 +44,6 @@ public class ConstructionEquipmentImpl implements ConstructionEquipmentService {
         if(constructionEquipmentDO!=null){
             ConstructionEquipmentDTO constructionEquipmentDTO = new ConstructionEquipmentDTO();
             BeanUtils.copyProperties(constructionEquipmentDO,constructionEquipmentDTO);
-            System.out.println("master");
-            System.out.println("master");
-            System.out.println("master");
-            System.out.println("master");
-            System.out.println("test");
             return constructionEquipmentDTO;
         }
         return null;
