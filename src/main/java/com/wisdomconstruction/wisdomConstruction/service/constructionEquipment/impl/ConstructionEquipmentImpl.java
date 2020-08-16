@@ -47,6 +47,7 @@ public class ConstructionEquipmentImpl implements ConstructionEquipmentService {
             return constructionEquipmentDTO;
         }
         System.out.println("2");
+        System.out.println("3");
         return null;
     }
 }
