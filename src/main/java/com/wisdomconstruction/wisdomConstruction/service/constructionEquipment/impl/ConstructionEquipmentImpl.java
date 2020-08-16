@@ -46,6 +46,7 @@ public class ConstructionEquipmentImpl implements ConstructionEquipmentService {
             BeanUtils.copyProperties(constructionEquipmentDO,constructionEquipmentDTO);
             return constructionEquipmentDTO;
         }
+        System.out.println("2");
         return null;
     }
 }
